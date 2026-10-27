@@ -1,0 +1,951 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuickBite | Food Order Stack System</title>
+
+<style>
+:root {
+    --navy: #172554;
+    --blue: #2563eb;
+    --orange: #f97316;
+    --bg: #f5f7fb;
+    --white: #ffffff;
+    --muted: #64748b;
+    --green: #15803d;
+    --red: #dc2626;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--bg);
+    color: #1e293b;
+}
+
+header {
+    background: linear-gradient(125deg, #172554, #1d4ed8);
+    color: white;
+    padding: 26px max(22px, calc((100% - 1200px)/2));
+    position: relative;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo {
+    width: 49px;
+    height: 49px;
+    display: grid;
+    place-items: center;
+    background: var(--orange);
+    border-radius: 14px;
+    font-size: 27px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 27px;
+}
+
+header p {
+    color: #dbeafe;
+    margin: 8px 55px 0 0;
+    line-height: 1.5;
+}
+
+.help-button {
+    position: absolute;
+    top: 24px;
+    right: max(22px, calc((100% - 1200px)/2));
+    width: 43px;
+    height: 43px;
+    border-radius: 50%;
+    border: 2px solid white;
+    background: #facc15;
+    color: #172554;
+    font-size: 25px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 26px auto;
+    padding: 0 18px;
+}
+
+.hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+}
+
+.hero h2 {
+    margin: 0 0 6px;
+    font-size: 24px;
+    color: var(--navy);
+}
+
+.hero p { margin: 0; color: var(--muted); }
+
+.pill {
+    background: #ffedd5;
+    color: #9a3412;
+    padding: 9px 13px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.stat {
+    background: white;
+    padding: 19px;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px #0f172a08;
+    border: 1px solid #e8edf5;
+}
+
+.stat .label { color: var(--muted); font-size: 13px; }
+.stat .number { font-size: 27px; font-weight: bold; margin-top: 8px; }
+.stat .symbol { font-size: 22px; float: right; }
+
+.layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(300px, .85fr);
+    gap: 20px;
+}
+
+.card {
+    background: white;
+    padding: 22px;
+    margin-bottom: 20px;
+    border-radius: 15px;
+    border: 1px solid #e8edf5;
+    box-shadow: 0 5px 18px #0f172a08;
+}
+
+.card h2 {
+    margin: 0 0 8px;
+    color: var(--navy);
+    font-size: 20px;
+}
+
+.subtitle {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0 0 18px;
+}
+
+label {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    margin: 13px 0 7px;
+}
+
+input, select, textarea {
+    width: 100%;
+    border: 1px solid #d6deea;
+    background: #fbfdff;
+    padding: 12px;
+    border-radius: 9px;
+    font: inherit;
+    outline: none;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px #2563eb15;
+}
+
+textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+.two-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+button {
+    border: 0;
+    border-radius: 9px;
+    padding: 11px 14px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    transition: transform .15s, opacity .15s;
+}
+
+button:hover { transform: translateY(-1px); }
+button:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+.primary { background: var(--blue); color: white; }
+.orange { background: var(--orange); color: white; }
+.light { background: #eaf0f8; color: var(--navy); }
+.danger { background: #fee2e2; color: #991b1b; }
+.green { background: #dcfce7; color: #166534; }
+
+.actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.message {
+    margin-top: 14px;
+    padding: 11px;
+    border-radius: 8px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.order {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 15px;
+    margin-top: 12px;
+    background: white;
+    overflow-wrap: anywhere;
+}
+
+.order.top {
+    border: 2px solid var(--orange);
+    background: #fff7ed;
+}
+
+.order h3 { margin: 0 0 7px; color: var(--navy); }
+.order p { margin: 5px 0; font-size: 13px; line-height: 1.5; }
+.order .price { font-weight: bold; color: var(--green); font-size: 16px; }
+
+.tag {
+    display: inline-block;
+    border-radius: 20px;
+    padding: 5px 8px;
+    font-size: 11px;
+    font-weight: bold;
+    background: #ffedd5;
+    color: #9a3412;
+    margin-bottom: 8px;
+}
+
+.stack-view {
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.stack-item {
+    background: white;
+    border: 1px solid #dbe4f0;
+    border-radius: 9px;
+    padding: 12px;
+    margin-top: 9px;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.stack-item:first-child {
+    border: 2px solid var(--orange);
+    background: #fff7ed;
+}
+
+.stack-top {
+    color: #c2410c;
+    font-weight: bold;
+    font-size: 11px;
+    margin-bottom: 5px;
+}
+
+.empty-state {
+    padding: 24px 10px;
+    text-align: center;
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+#importance {
+    background: #fffbeb;
+    border: 2px solid #facc15;
+}
+
+#importance h2 { color: #854d0e; }
+#importance li { margin-bottom: 10px; line-height: 1.6; }
+#importance strong { color: #713f12; }
+
+.footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 15px 10px 28px;
+}
+
+@media(max-width: 850px) {
+    .layout { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media(max-width: 480px) {
+    header h1 { font-size: 21px; }
+    .two-cols { grid-template-columns: 1fr; }
+    .stats { gap: 9px; }
+    .stat { padding: 14px; }
+    .stat .number { font-size: 23px; }
+    .card { padding: 16px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="brand">
+        <div class="logo">🍔</div>
+        <div>
+            <h1>QuickBite</h1>
+            <div style="color:#bfdbfe;font-size:12px;margin-top:4px">
+                FOOD ORDER MANAGEMENT SYSTEM
+            </div>
+        </div>
+    </div>
+
+    <p>A data structures project demonstrating stack operations in food order management.</p>
+
+    <button class="help-button" onclick="toggleImportance()"
+            title="Why is a stack necessary?"
+            aria-label="Explain why a stack is necessary">?</button>
+</header>
+
+<div class="container">
+
+    <section id="importance" class="card" hidden>
+        <h2>❓ Why Is a Stack Necessary?</h2>
+        <p class="subtitle">
+            A stack stores orders in Last In, First Out (LIFO) order.
+            The most recently added order is at the top.
+        </p>
+
+        <ol>
+            <li><strong>push():</strong> Adds a new order to the top of the stack.</li>
+            <li><strong>pop():</strong> Removes the order at the top when it is processed or cancelled.</li>
+            <li><strong>top():</strong> Shows the latest order without removing it.</li>
+            <li><strong>empty():</strong> Checks whether there are any orders in the stack before trying to remove one.</li>
+            <li><strong>Order tracking:</strong> Makes it easy to identify the most recently added order.</li>
+            <li><strong>Underflow prevention:</strong> Checking empty() prevents trying to pop an order when none exists.</li>
+        </ol>
+
+        <div class="message">
+            <strong>Example:</strong> Add Order A, then Order B. Order B is now
+            on top. Calling pop() removes Order B first, because it was added last.
+        </div>
+
+        <p class="subtitle" style="margin-top:14px">
+            <strong>Academic note:</strong> Real delivery dispatch systems commonly use
+            queues so the oldest order can be served first. This application
+            deliberately uses a stack to demonstrate LIFO operations for a
+            data structures assignment; it is not claiming that LIFO is the
+            normal way to dispatch food deliveries.
+        </p>
+
+        <button class="light" onclick="toggleImportance()">Close explanation</button>
+    </section>
+
+    <section class="hero">
+        <div>
+            <h2>Order Dashboard</h2>
+            <p>Manage orders and demonstrate PUSH, POP, TOP and EMPTY.</p>
+        </div>
+        <span class="pill">STACK • LIFO</span>
+    </section>
+
+    <section class="stats">
+        <div class="stat">
+            <span class="symbol">📦</span>
+            <div class="label">Active Orders</div>
+            <div class="number" id="activeCount">0</div>
+        </div>
+        <div class="stat">
+            <span class="symbol">🍽️</span>
+            <div class="label">Completed Orders</div>
+            <div class="number" id="completedCount">0</div>
+        </div>
+        <div class="stat">
+            <span class="symbol">💰</span>
+            <div class="label">Completed Value</div>
+            <div class="number" id="completedValue">GH₵0.00</div>
+        </div>
+        <div class="stat">
+            <span class="symbol">⬆️</span>
+            <div class="label">Top Order</div>
+            <div class="number" id="topOrderNumber">—</div>
+        </div>
+    </section>
+
+    <div class="layout">
+        <main>
+            <section class="card">
+                <h2>➕ Create a Food Order</h2>
+                <p class="subtitle">Enter customer details and the food ordered.</p>
+
+                <form id="orderForm">
+                    <div class="two-cols">
+                        <div>
+                            <label for="customer">Customer Name</label>
+                            <input id="customer" placeholder="e.g. Ama Mensah" required>
+                        </div>
+                        <div>
+                            <label for="phone">Phone Number (optional)</label>
+                            <input id="phone" placeholder="e.g. 024 000 0000">
+                        </div>
+                    </div>
+
+                    <label for="food">Food Item</label>
+                    <select id="food" required>
+                        <option value="">Select a meal</option>
+                        <option value="Jollof Rice" data-price="65">Jollof Rice — GH₵65</option>
+                        <option value="Fried Rice" data-price="70">Fried Rice — GH₵70</option>
+                        <option value="Waakye" data-price="45">Waakye — GH₵45</option>
+                        <option value="Banku and Tilapia" data-price="100">Banku and Tilapia — GH₵100</option>
+                        <option value="Fried Chicken and Chips" data-price="85">Fried Chicken and Chips — GH₵85</option>
+                        <option value="Pizza" data-price="120">Pizza — GH₵120</option>
+                        <option value="Custom Order" data-price="0">Custom Order — enter price below</option>
+                    </select>
+
+                    <label for="price">Price (GH₵)</label>
+                    <input id="price" type="number" min="0.01" step="0.01"
+                           placeholder="Enter price" required>
+
+                    <label for="instructions">Special Instructions (optional)</label>
+                    <textarea id="instructions"
+                              placeholder="e.g. No pepper, extra salad..."></textarea>
+
+                    <div class="actions">
+                        <button class="primary" type="submit">PUSH — Add Order</button>
+                        <button class="light" type="button" onclick="fillSample()">Add Sample Order</button>
+                    </div>
+                </form>
+
+                <div class="message" id="message" role="status">
+                    Welcome! Add an order to start using the stack.
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>⚙️ Stack Operations</h2>
+                <p class="subtitle">Perform the four core operations on active orders.</p>
+                <div class="actions">
+                    <button class="orange" onclick="showTop()">TOP — View Order</button>
+                    <button class="primary" onclick="processTop()">POP — Process Top Order</button>
+                    <button class="light" onclick="checkEmpty()">EMPTY — Check Stack</button>
+                </div>
+                <p class="subtitle" style="margin-top:12px">
+                    Processing an order removes the top order from the active stack
+                    and records it as completed.
+                </p>
+            </section>
+
+            <section class="card">
+                <h2>🧾 Active Orders</h2>
+                <p class="subtitle">The latest order appears first.</p>
+                <label for="search">Search orders</label>
+                <input id="search" placeholder="Search customer, meal or order number..."
+                       oninput="renderActive()">
+                <div id="activeOrders"></div>
+            </section>
+
+            <section class="card">
+                <h2>✅ Completed Orders</h2>
+                <div id="completedOrders"></div>
+            </section>
+        </main>
+
+        <aside>
+            <section class="card">
+                <h2>📚 Live Stack View</h2>
+                <p class="subtitle">
+                    Visual representation of the active stack.
+                    TOP is the next order affected by pop().
+                </p>
+                <div class="stack-view" id="stackView"></div>
+                <p class="subtitle" style="margin-top:13px">
+                    <strong>Remember:</strong> PUSH adds to the top.
+                    POP removes the top. TOP views the top.
+                    EMPTY checks whether the stack contains orders.
+                </p>
+            </section>
+
+            <section class="card">
+                <h2>🧠 How It Works</h2>
+                <div class="stack-item">
+                    <strong>1. PUSH</strong>
+                    <p>Add an order to the stack.</p>
+                </div>
+                <div class="stack-item">
+                    <strong>2. TOP</strong>
+                    <p>Inspect the latest order.</p>
+                </div>
+                <div class="stack-item">
+                    <strong>3. POP</strong>
+                    <p>Remove the top order.</p>
+                </div>
+                <div class="stack-item">
+                    <strong>4. EMPTY</strong>
+                    <p>Check whether the stack has no orders.</p>
+                </div>
+                <button class="danger" style="width:100%;margin-top:15px"
+                        onclick="resetDemo()">Reset Demo Data</button>
+            </section>
+        </aside>
+    </div>
+</div>
+
+<footer class="footer">
+    QuickBite — Student Data Structures Project | Stack Implementation
+</footer>
+
+<script>
+class OrderStack {
+    constructor() {
+        this.items = [];
+    }
+
+    // PUSH: add an order to the top.
+    push(order) {
+        this.items.push(order);
+    }
+
+    // POP: remove and return the top order.
+    pop() {
+        if (this.empty()) return null;
+        return this.items.pop();
+    }
+
+    // TOP: return the top order without removing it.
+    top() {
+        if (this.empty()) return null;
+        return this.items[this.items.length - 1];
+    }
+
+    // EMPTY: true if there are no active orders.
+    empty() {
+        return this.items.length === 0;
+    }
+
+    size() {
+        return this.items.length;
+    }
+}
+
+const STORAGE_KEY = "quickbite_stack_demo_v1";
+const stack = new OrderStack();
+let completed = [];
+let nextOrderNumber = 1001;
+
+const orderForm = document.getElementById("orderForm");
+const foodSelect = document.getElementById("food");
+const priceInput = document.getElementById("price");
+const message = document.getElementById("message");
+
+function setMessage(text) {
+    message.textContent = text;
+}
+
+function money(value) {
+    return "GH₵" + Number(value).toFixed(2);
+}
+
+function toggleImportance() {
+    const section = document.getElementById("importance");
+    section.hidden = !section.hidden;
+}
+
+foodSelect.addEventListener("change", function() {
+    const option = foodSelect.options[foodSelect.selectedIndex];
+    const price = option.dataset.price;
+
+    if (price && Number(price) > 0) {
+        priceInput.value = price;
+    } else if (foodSelect.value === "Custom Order") {
+        priceInput.value = "";
+        priceInput.focus();
+    }
+});
+
+function createOrder(customer, phone, food, price, instructions) {
+    return {
+        id: "QB-" + nextOrderNumber++,
+        customer,
+        phone,
+        food,
+        price: Number(price),
+        instructions,
+        createdAt: new Date().toLocaleString()
+    };
+}
+
+function saveData() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            active: stack.items,
+            completed,
+            nextOrderNumber
+        }));
+    } catch (error) {
+        setMessage("Browser storage is unavailable. Your current data may not persist after refresh.");
+    }
+}
+
+function loadData() {
+    try {
+        const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+
+        if (data && Array.isArray(data.active)) {
+            data.active.forEach(order => stack.push(order));
+            completed = Array.isArray(data.completed) ? data.completed : [];
+            nextOrderNumber = Number(data.nextOrderNumber) || 1001;
+            return;
+        }
+    } catch (error) {}
+
+    // Demo orders make the stack visible immediately.
+    stack.push(createOrder(
+        "Ama Mensah", "024 000 0001", "Jollof Rice", 65,
+        "Extra salad"
+    ));
+    stack.push(createOrder(
+        "Kwame Owusu", "024 000 0002", "Fried Rice", 70,
+        "No pepper"
+    ));
+    stack.push(createOrder(
+        "Akosua Boateng", "", "Waakye", 45,
+        "Extra spaghetti"
+    ));
+
+    saveData();
+}
+
+orderForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const customer = document.getElementById("customer").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const food = foodSelect.value;
+    const price = Number(priceInput.value);
+    const instructions = document.getElementById("instructions").value.trim();
+
+    if (!customer || !food || !Number.isFinite(price) || price <= 0) {
+        setMessage("Please enter a customer name, food item and valid price.");
+        return;
+    }
+
+    const order = createOrder(customer, phone, food, price, instructions);
+
+    // Actual PUSH operation.
+    stack.push(order);
+
+    saveData();
+    renderAll();
+    setMessage("PUSH successful! " + order.id + " was added to the top of the stack.");
+
+    orderForm.reset();
+});
+
+function fillSample() {
+    const samples = [
+        ["Yaw Asante", "024 111 2222", "Pizza", 120, "Extra cheese"],
+        ["Esi Arthur", "024 333 4444", "Banku and Tilapia", 100, "Pepper on the side"],
+        ["Kofi Addo", "", "Fried Chicken and Chips", 85, "Extra ketchup"]
+    ];
+
+    const sample = samples[Math.floor(Math.random() * samples.length)];
+    const order = createOrder(...sample);
+
+    // Actual PUSH operation.
+    stack.push(order);
+
+    saveData();
+    renderAll();
+    setMessage("Sample order added using PUSH: " + order.id + ".");
+}
+
+function showTop() {
+    // Actual TOP operation.
+    const order = stack.top();
+
+    if (order === null) {
+        setMessage("TOP: the stack is empty. There is no order to display.");
+        alert("The stack is empty.");
+        return;
+    }
+
+    setMessage("TOP: " + order.id + " — " + order.food +
+        ". The order remains in the stack.");
+
+    const text = "Order: " + order.id +
+        "\nCustomer: " + order.customer +
+        "\nFood: " + order.food +
+        "\nPrice: " + money(order.price) +
+        "\nInstructions: " + (order.instructions || "None");
+
+    alert("LATEST ORDER (TOP)\n\n" + text);
+}
+
+function processTop() {
+    // Check EMPTY before POP to prevent underflow.
+    if (stack.empty()) {
+        setMessage("POP cannot be performed because the stack is empty.");
+        alert("No active orders to process.");
+        return;
+    }
+
+    const topOrder = stack.top();
+
+    if (!confirm("Process the top order?\n\n" +
+        topOrder.id + " — " + topOrder.food +
+        "\nCustomer: " + topOrder.customer +
+        "\nTotal: " + money(topOrder.price))) {
+        return;
+    }
+
+    // Actual POP operation.
+    const processed = stack.pop();
+    processed.completedAt = new Date().toLocaleString();
+    completed.unshift(processed);
+
+    saveData();
+    renderAll();
+    setMessage("POP successful! " + processed.id +
+        " was removed from the active stack and marked completed.");
+}
+
+function checkEmpty() {
+    // Actual EMPTY operation.
+    if (stack.empty()) {
+        setMessage("EMPTY returned true: there are no active orders.");
+        alert("STACK EMPTY\nThere are no active orders.");
+    } else {
+        setMessage("EMPTY returned false: " + stack.size() +
+            " active order(s) remain in the stack.");
+        alert("STACK NOT EMPTY\nActive orders: " + stack.size());
+    }
+}
+
+function deleteOrder(id) {
+    const index = stack.items.findIndex(order => order.id === id);
+    if (index === -1) return;
+
+    const order = stack.items[index];
+
+    if (!confirm("Delete " + order.id + " (" + order.food + ")?")) return;
+
+    /*
+       Direct deletion is a convenience feature.
+       It is not a standard stack POP, because POP only removes the top.
+    */
+    stack.items.splice(index, 1);
+
+    saveData();
+    renderAll();
+    setMessage(order.id + " was deleted directly from the active orders.");
+}
+
+function makeOrderCard(order, isTop) {
+    const card = document.createElement("article");
+    card.className = "order" + (isTop ? " top" : "");
+
+    if (isTop) {
+        const badge = document.createElement("div");
+        badge.className = "tag";
+        badge.textContent = "TOP OF STACK";
+        card.appendChild(badge);
+    }
+
+    const title = document.createElement("h3");
+    title.textContent = "🍽️ " + order.food;
+
+    const id = document.createElement("p");
+    id.textContent = "Order ID: " + order.id;
+
+    const customer = document.createElement("p");
+    customer.textContent = "Customer: " + order.customer;
+
+    const price = document.createElement("p");
+    price.className = "price";
+    price.textContent = money(order.price);
+
+    const instructions = document.createElement("p");
+    instructions.textContent = "Instructions: " + (order.instructions || "None");
+
+    const time = document.createElement("p");
+    time.textContent = "Created: " + order.createdAt;
+
+    card.append(title, id, customer, price, instructions, time);
+    return card;
+}
+
+function renderActive() {
+    const container = document.getElementById("activeOrders");
+    const query = document.getElementById("search").value.toLowerCase().trim();
+
+    container.innerHTML = "";
+
+    const orders = stack.items.slice().reverse().filter(order => {
+        return [
+            order.id, order.customer, order.food, order.instructions
+        ].join(" ").toLowerCase().includes(query);
+    });
+
+    if (orders.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent = stack.empty()
+            ? "🛍️ No active orders. Add an order to begin."
+            : "No orders match your search.";
+        container.appendChild(empty);
+        return;
+    }
+
+    orders.forEach(order => {
+        const card = makeOrderCard(order, order === stack.top());
+
+        const del = document.createElement("button");
+        del.className = "danger";
+        del.textContent = "Delete Order";
+        del.onclick = () => deleteOrder(order.id);
+
+        card.appendChild(del);
+        container.appendChild(card);
+    });
+}
+
+function renderStack() {
+    const view = document.getElementById("stackView");
+    view.innerHTML = "";
+
+    if (stack.empty()) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent = "STACK EMPTY\nNo orders currently stored.";
+        view.appendChild(empty);
+        return;
+    }
+
+    stack.items.slice().reverse().forEach((order, index) => {
+        const item = document.createElement("div");
+        item.className = "stack-item";
+
+        if (index === 0) {
+            const topLabel = document.createElement("div");
+            topLabel.className = "stack-top";
+            topLabel.textContent = "▲ TOP — NEXT TO BE POPPED";
+            item.appendChild(topLabel);
+        }
+
+        const name = document.createElement("strong");
+        name.textContent = order.id + " | " + order.food;
+
+        const customer = document.createElement("div");
+        customer.style.marginTop = "5px";
+        customer.textContent = order.customer + " • " + money(order.price);
+
+        item.append(name, customer);
+        view.appendChild(item);
+    });
+}
+
+function renderCompleted() {
+    const container = document.getElementById("completedOrders");
+    container.innerHTML = "";
+
+    if (completed.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent = "Completed orders will appear here after POP.";
+        container.appendChild(empty);
+        return;
+    }
+
+    completed.forEach(order => {
+        const card = document.createElement("div");
+        card.className = "order";
+
+        const title = document.createElement("h3");
+        title.textContent = "✅ " + order.food;
+
+        const details = document.createElement("p");
+        details.textContent = order.id + " • " + order.customer;
+
+        const price = document.createElement("p");
+        price.className = "price";
+        price.textContent = money(order.price);
+
+        card.append(title, details, price);
+        container.appendChild(card);
+    });
+}
+
+function renderAll() {
+    document.getElementById("activeCount").textContent = stack.size();
+    document.getElementById("completedCount").textContent = completed.length;
+
+    const revenue = completed.reduce((total, order) =>
+        total + Number(order.price), 0);
+
+    document.getElementById("completedValue").textContent = money(revenue);
+
+    const top = stack.top();
+    document.getElementById("topOrderNumber").textContent =
+        top ? top.id : "—";
+
+    renderStack();
+    renderActive();
+    renderCompleted();
+}
+
+function resetDemo() {
+    if (!confirm("Reset the demo and remove all active and completed orders?")) {
+        return;
+    }
+
+    stack.items.length = 0;
+    completed = [];
+    nextOrderNumber = 1001;
+
+    localStorage.removeItem(STORAGE_KEY);
+
+    loadData();
+    renderAll();
+    setMessage("Demo reset. Sample orders are ready for your presentation.");
+}
+
+loadData();
+renderAll();
+</script>
+
+</body>
+</html>
