@@ -1,0 +1,396 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Food Delivery Stack System</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    color: #243247;
+}
+
+header {
+    background: #173b70;
+    color: white;
+    text-align: center;
+    padding: 25px 15px;
+}
+
+header h1 {
+    margin-top: 0;
+}
+
+.container {
+    max-width: 950px;
+    margin: 25px auto;
+    padding: 15px;
+}
+
+.card {
+    background: white;
+    padding: 22px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px #00000012;
+}
+
+.stats {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.stat {
+    flex: 1;
+    min-width: 130px;
+    background: #e9f2ff;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.stat strong {
+    display: block;
+    font-size: 22px;
+    margin-top: 8px;
+    color: #173b70;
+}
+
+.orders {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 100px;
+    padding: 15px;
+    background: #f8fafc;
+    border: 2px dashed #b5c9e5;
+    border-radius: 10px;
+}
+
+.order {
+    padding: 15px;
+    background: #e0ecff;
+    border: 2px solid #a7c8f5;
+    border-radius: 9px;
+}
+
+.order.top {
+    background: #d8f8e5;
+    border-color: #38a169;
+}
+
+.order h3 {
+    margin: 0 0 7px;
+}
+
+.badge {
+    display: inline-block;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 20px;
+    background: white;
+    margin-top: 5px;
+}
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+button {
+    flex: 1;
+    min-width: 150px;
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+.add { background: #198754; }
+.deliver { background: #2878e8; }
+.peek { background: #7952b3; }
+.reset { background: #dc3545; }
+
+.message {
+    margin-top: 15px;
+    padding: 14px;
+    background: #edf4ff;
+    border-radius: 8px;
+    line-height: 1.5;
+}
+
+.explanation {
+    line-height: 1.8;
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Food Delivery Order Management</h1>
+    <p>A Real-World Application of the Stack Data Structure</p>
+    <p><strong>LIFO: Last In, First Out</strong></p>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Order Dashboard</h2>
+
+        <div class="stats">
+            <div class="stat">
+                Total Orders
+                <strong id="total">0</strong>
+            </div>
+
+            <div class="stat">
+                Next Order
+                <strong id="next">None</strong>
+            </div>
+
+            <div class="stat">
+                Completed
+                <strong id="completed">0</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Current Order Stack</h2>
+        <p>The most recently added order appears at the top.</p>
+
+        <div class="orders" id="orders"></div>
+
+        <div class="buttons">
+            <button class="add" onclick="addOrder()">
+                Add Next Order
+            </button>
+
+            <button class="deliver" onclick="deliverOrder()">
+                Process Top Order
+            </button>
+
+            <button class="peek" onclick="viewTop()">
+                View Top Order
+            </button>
+
+            <button class="reset" onclick="resetSystem()">
+                Reset System
+            </button>
+        </div>
+
+        <div class="message" id="message">
+            Welcome! Sample orders have been loaded automatically.
+        </div>
+    </div>
+
+    <div class="card explanation">
+        <h2>How the Stack Is Used</h2>
+
+        <p><strong>Push:</strong> A new food order is added to the top.</p>
+
+        <p><strong>Pop:</strong> The most recently added order is removed from the stack.</p>
+
+        <p><strong>Peek:</strong> The top order is viewed without removing it.</p>
+
+        <p><strong>LIFO:</strong> The last order added is the first order removed.</p>
+
+        <h3>Why Is a Stack Necessary?</h3>
+
+        <p>
+            A stack is useful when a system needs to manage the most
+            recent item first, such as temporary orders, undo actions,
+            and recent activity.
+        </p>
+
+        <p>
+            <strong>Note:</strong> Real food delivery companies usually
+            prioritize orders using queues and scheduling rules, often
+            serving earlier orders first. This project intentionally
+            uses a stack to demonstrate LIFO, rather than claim that
+            stacks are the standard way to dispatch real deliveries.
+        </p>
+    </div>
+
+</div>
+
+<script>
+// The array is the actual stack.
+// The last element is the top order.
+
+const sampleOrders = [
+    {
+        id: 101,
+        customer: "Ama Mensah",
+        food: "Jollof Rice",
+        price: 45
+    },
+    {
+        id: 102,
+        customer: "Kojo Asare",
+        food: "Fried Rice and Chicken",
+        price: 60
+    },
+    {
+        id: 103,
+        customer: "Abena Owusu",
+        food: "Waakye",
+        price: 35
+    },
+    {
+        id: 104,
+        customer: "Kwame Boateng",
+        food: "Banku and Tilapia",
+        price: 80
+    },
+    {
+        id: 105,
+        customer: "Akosua Addo",
+        food: "Pizza",
+        price: 70
+    }
+];
+
+let orders = sampleOrders.slice(0, 3);
+let nextOrderIndex = 3;
+let completedOrders = 0;
+
+function displayOrders() {
+    const container = document.getElementById("orders");
+    container.innerHTML = "";
+
+    // Display from the top of the stack downward.
+    for (let i = orders.length - 1; i >= 0; i--) {
+        const order = orders[i];
+        const card = document.createElement("div");
+
+        card.className = "order";
+
+        if (i === orders.length - 1) {
+            card.classList.add("top");
+        }
+
+        const title = document.createElement("h3");
+        title.textContent = "Order #" + order.id +
+            (i === orders.length - 1 ? " — TOP ORDER" : "");
+
+        const customer = document.createElement("p");
+        customer.textContent = "Customer: " + order.customer;
+
+        const food = document.createElement("p");
+        food.textContent = "Food: " + order.food;
+
+        const price = document.createElement("p");
+        price.textContent = "Price: GH₵" + order.price.toFixed(2);
+
+        card.append(title, customer, food, price);
+        container.appendChild(card);
+    }
+
+    if (orders.length === 0) {
+        container.textContent = "No orders in the stack.";
+    }
+
+    document.getElementById("total").textContent = orders.length;
+    document.getElementById("completed").textContent = completedOrders;
+
+    document.getElementById("next").textContent =
+        orders.length > 0
+            ? "#" + orders[orders.length - 1].id
+            : "None";
+}
+
+// PUSH: Add the next prepared sample order.
+function addOrder() {
+    if (nextOrderIndex >= sampleOrders.length) {
+        document.getElementById("message").textContent =
+            "All sample orders have been added. Reset the system to start again.";
+        return;
+    }
+
+    const order = sampleOrders[nextOrderIndex];
+
+    orders.push(order);
+    nextOrderIndex++;
+
+    document.getElementById("message").textContent =
+        "PUSH: Order #" + order.id + " was added to the top.";
+
+    displayOrders();
+}
+
+// POP: Remove the most recently added order.
+function deliverOrder() {
+    if (orders.length === 0) {
+        document.getElementById("message").textContent =
+            "Stack Underflow: There are no orders to process.";
+        return;
+    }
+
+    const order = orders.pop();
+    completedOrders++;
+
+    document.getElementById("message").textContent =
+        "POP: Order #" + order.id + " (" + order.food +
+        ") was removed from the top of the stack.";
+
+    displayOrders();
+}
+
+// PEEK: View the top order without removing it.
+function viewTop() {
+    if (orders.length === 0) {
+        document.getElementById("message").textContent =
+            "The stack is empty. There is no top order.";
+        return;
+    }
+
+    const order = orders[orders.length - 1];
+
+    document.getElementById("message").textContent =
+        "PEEK: Order #" + order.id + " for " +
+        order.customer + " is at the top. It remains in the stack.";
+}
+
+// Reset the application to its initial state.
+function resetSystem() {
+    orders = sampleOrders.slice(0, 3);
+    nextOrderIndex = 3;
+    completedOrders = 0;
+
+    document.getElementById("message").textContent =
+        "System reset. Three sample orders are loaded.";
+
+    displayOrders();
+}
+
+// Automatically display the sample orders.
+displayOrders();
+</script>
+
+</body>
+</html>
